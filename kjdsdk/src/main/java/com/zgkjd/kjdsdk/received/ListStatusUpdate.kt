@@ -16,7 +16,10 @@ interface ListStatusUpdate {
      */
     fun updateList(list : List<String>)
 
+    /**
+     * 单个列表变化
+     */
     interface SingleStatusUpdate{
-        fun updateSingle()
+        fun updateSingle(api:String)
     }
 }

@@ -30,4 +30,6 @@ dependencies {
     api 'com.android.support:multidex:1.0.3'
     implementation project(':baseui')
     implementation project(':kjdsdk')
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+
 }

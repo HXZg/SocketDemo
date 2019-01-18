@@ -1,6 +1,7 @@
 package com.zgkjd.kjdsdk.received
 
-import com.zgkjd.kjdsdk.bean.response.PushListInfo
+import android.telecom.GatewayInfo
+import com.zgkjd.kjdsdk.bean.response.GateWayInfo
 
 /**
  * @title com.zgkjd.kjdsdk.received  SocketBase
@@ -24,7 +25,7 @@ class ListChangReceived {
      * 存储所有新的version，与data的version进行比较
      * 请求列表时，也存储对应的version
      */
-    fun handlerUpdateList(bean : PushListInfo.DataVerBean){
+    fun handlerUpdateList(bean : GateWayInfo.DataVerBean){
 
     }
 
@@ -54,7 +55,7 @@ class ListChangReceived {
     private fun returnSingle(constract: String){
         for (i in map.keys){
             if (constract == i){
-                map[i]?.updateSingle()
+                map[i]?.updateSingle(i)
             }
         }
     }

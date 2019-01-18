@@ -76,6 +76,7 @@ object SocketClient {
 
     fun writeData(s : String){
         if (ch != null && ch!!.isOpen){
+            Log.i("socket_test",s)
             ch?.writeAndFlush("${s + lineEnds}")?.addListener {
                 if (!it.isSuccess){
                     mListener?.writeFail(s)

@@ -1,7 +1,9 @@
 package com.zgkjd.kjdsdk.cache
 
 import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.Utils
 import com.google.gson.Gson
+import com.zgkjd.kjdsdk.bean.response.GateWayInfo
 import com.zgkjd.kjdsdk.bean.response.LoginInfo
 import com.zgkjd.kjdsdk.manager.Constract
 import org.json.JSONObject
@@ -26,7 +28,7 @@ object KJDLruCache {
     /**
      * 网关是否在线  1:在线
      */
-    var mIsOnLine = 0
+    var mIsOnLine = -1
 
     var mRegisterPwd = ""  //注册成功服务端返回的密码,为null则未注册过
     set(value) {
@@ -44,7 +46,7 @@ object KJDLruCache {
     private var mCache : KJDCache? = null
     get() {
         if (field == null){
-            field = KJDCache.get(ActivityUtils.getTopActivity(),Constract.CACHE_FILE_NAME)
+            field = KJDCache.get(Utils.getApp(),Constract.CACHE_FILE_NAME)
         }
         return field
     }
@@ -62,9 +64,24 @@ object KJDLruCache {
 
     fun putListMap(key : String,value : String){
         mListMap[key] = value
+        mCache!!.put(key,value)
     }
 
-    private fun getListMap(key: String) = mListMap[key]
+    fun getListMap(key: String) : String{
+        if (mListMap[key] == null){
+            val asString = mCache!!.getAsString(key) ?: return ""
+            mListMap[key] = asString
+        }
+        return mListMap[key]!!
+    }
+
+    fun cacheListMap(bean : GateWayInfo.DataVerBean){
+        putListMap(Constract.UPD_DEVICE_LIST,bean.ver_dev_list ?: "")
+        putListMap(Constract.UPD_AREA_LIST,bean.ver_area_list ?: "")
+        putListMap(Constract.UPD_CAMERA_LIST,bean.ver_cam_list ?: "")
+        putListMap(Constract.UPD_CRON_LIST,bean.ver_cron_list ?: "")
+        putListMap(Constract.UPD_SCENE_LIST,bean.ver_scene_list ?: "")
+    }
 
     fun putListData(key: String,value: JSONObject){
         mListData[key] = value
@@ -98,10 +115,10 @@ object KJDLruCache {
     /**
      * 得到登录用户信息
      */
-    fun getUserInfo() : LoginInfo.UserInfoBean{
+    fun getUserInfo() : LoginInfo.UserInfoBean?{
         if (mUserBean == null){
             mUserBean = Gson().fromJson(mCache!!.getAsString(Constract.LOGIN_USER_INFO)  ?: "",LoginInfo.UserInfoBean::class.java)
         }
-        return mUserBean!!
+        return mUserBean
     }
 }

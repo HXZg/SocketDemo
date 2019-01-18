@@ -18,8 +18,18 @@ object Constract {
     const val GATEWAY_INLINE = "is_online"     //网关是否在线
     const val REGISTER_PWD = "register_pwd"    //注册成功后的密码
     const val LOGIN_USER_INFO = "login_info"    //登录后的用户信息
+    const val BIND_GATEWAY_SUC = "bind_gw_suc"  //绑定网关成功
+
+
+    /**
+     * 网关在线的状态
+     */
+    const val GATEWAY_LINE = ""
+    const val GATEWAY_NO = ""
+    const val NO_NETWORK = ""
 
     const val CHANGE_RECEIVE_LIST = "app_push_data_ver"
     const val CHANGE_RECEIVE_ONLINE = "app_push_gw_is_online"
+    const val UPDATE_DEV_STA = "smart_set_dev_sta"  //设备状态改变
 
 }

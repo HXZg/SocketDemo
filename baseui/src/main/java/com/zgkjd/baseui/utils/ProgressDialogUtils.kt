@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 
 /**
@@ -58,7 +59,7 @@ object ProgressDialogUtils {
         val p = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         linearLayout.layoutParams = p
 
-        val contentLoadingProgressBar = ContentLoadingProgressBar(context)
+        val contentLoadingProgressBar = ProgressBar(context)
         contentLoadingProgressBar.indeterminateDrawable
                 .setColorFilter(context.resources.getColor(proColor),PorterDuff.Mode.MULTIPLY)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)

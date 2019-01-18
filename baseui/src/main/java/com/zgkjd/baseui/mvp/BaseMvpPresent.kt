@@ -1,14 +1,19 @@
 package com.zgkjd.baseui.mvp
 
+import android.os.Handler
 import java.lang.ref.WeakReference
 
 /**
  * Created by xian_zhong on 2019/1/11.
  * des : ${class}
  */
-class BaseMvpPresent<V:BaseMvpView> {
+open class BaseMvpPresent<V:BaseMvpView> {
 
     private var vWeakReference: WeakReference<V>? = null
+    private var mHandler : Handler? = null
+    private var dialogRunnable = Runnable {
+        getView()?.showLoadingDialog()
+    }
 
     fun attachView(view: BaseMvpView) {
         vWeakReference = WeakReference(view as V)
@@ -21,11 +26,20 @@ class BaseMvpPresent<V:BaseMvpView> {
         }
     }
 
+    protected fun showDialog(){
+        mHandler?.postDelayed(dialogRunnable,300)
+    }
+
+    protected fun dismissDialog(){
+        mHandler?.removeCallbacks(dialogRunnable)
+        getView()?.dismissLoadingDialog()
+    }
+
     /**
      * activity onStart method
      */
     open fun startListener(){
-
+        mHandler = Handler()
     }
 
     /**

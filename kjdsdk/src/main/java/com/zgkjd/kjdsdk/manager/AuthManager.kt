@@ -1,17 +1,16 @@
 package com.zgkjd.kjdsdk.manager
 
-import android.util.JsonReader
 import com.blankj.utilcode.util.EncryptUtils
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.zgkjd.kjdsdk.api.KJDApi
+import com.zgkjd.kjdsdk.KJDSDKManager
+import com.zgkjd.kjdsdk.api.mapui
 import com.zgkjd.kjdsdk.api.ui
 import com.zgkjd.kjdsdk.bean.request.RegisterBean
+import com.zgkjd.kjdsdk.bean.response.GateWayInfo
 import com.zgkjd.kjdsdk.bean.response.LoginInfo
 import com.zgkjd.kjdsdk.bean.response.RegisterInfo
 import com.zgkjd.kjdsdk.cache.KJDLruCache
-import org.json.JSONObject
 import java.util.*
 
 /**
@@ -36,7 +35,7 @@ class AuthManager {
         registerBean.timestamp = System.currentTimeMillis().toString()
         registerBean.uuid = phoneId
         registerBean.pwd = EncryptUtils.encryptMD5ToString(MD5_SALT_REGISTER + phoneId + registerBean.timestamp).toLowerCase()
-        KJDApi.register(registerBean).ui({
+        KJDSDKManager.api!!.register(registerBean).ui({
             val bean = Gson().fromJson<RegisterInfo>(it.dataJson, RegisterInfo::class.java)
             KJDLruCache.mRegisterPwd = bean.pwd
             login(phoneId,bean.pwd)
@@ -48,12 +47,29 @@ class AuthManager {
         registerBean.timestamp = System.currentTimeMillis().toString()
         registerBean.uuid = phoneId
         registerBean.pwd = EncryptUtils.encryptMD5ToString(MD5_SALT_LOGIN + pwd + registerBean.timestamp).toLowerCase()
-        KJDApi.login(registerBean).addCall({
+        KJDSDKManager.api!!.login(registerBean).addCall({
             val bean = Gson().fromJson<LoginInfo>(it.dataJson, LoginInfo::class.java)
             KJDLruCache.saveUserInfo(bean.user_info)
+            if (bean.sn_list.isEmpty()){
+                KJDSDKManager.mGWStatus = "no"
+                KJDSDKManager.getCustomerListener(Constract.BIND_GATEWAY_SUC)?.update("no_gateway")
+            }
+            KJDSDKManager.getHandler().postDelayed({
+                bindGateWay(bean.sn_list[2].sn)
+            },100)
         },{
             LogUtils.i("auth_manager",it.message)
         })
+    }
+
+    fun bindGateWay(sn:String){
+        KJDSDKManager.reApi!!.bindGateway(sn).mapui(GateWayInfo::class.java,{
+            KJDLruCache.cacheListMap(it.data_ver)
+            KJDLruCache.mIsOnLine = it.is_online.toInt()
+            KJDSDKManager.mGWStatus = "ok"
+            LogUtils.i("bind_status",KJDSDKManager.mGWStatus)
+            KJDSDKManager.getCustomerListener(Constract.BIND_GATEWAY_SUC)?.update("ok")
+        },{type, msg ->  })
     }
 
 }

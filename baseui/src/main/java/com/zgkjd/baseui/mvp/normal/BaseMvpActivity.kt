@@ -24,7 +24,7 @@ abstract class BaseMvpActivity<out P : BaseMvpPresent<out BaseMvpView>> : BaseMv
      *
      * @return P层实例
      */
-    private fun getPresenter(): P {
+    protected fun getPresenter(): P {
         if (presenter == null) {
             presenter = createPresenter()
         }
